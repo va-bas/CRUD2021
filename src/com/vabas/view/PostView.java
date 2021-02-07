@@ -55,8 +55,8 @@ public class PostView {
     }
 
     public static void showCancel(){
-        //System.out.println(ForConsole.BORDER.getMessage());
-        System.out.println("press '0' for cancel");
+        System.out.println(ForConsole.BORDER.getMessage());
+        System.out.println("Press '0' for exit");
         //System.out.println(ForConsole.BORDER.getMessage());
     }
 

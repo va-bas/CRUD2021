@@ -11,7 +11,6 @@ import com.vabas.view.ForConsole;
 import com.vabas.view.LabelView;
 import com.vabas.view.PostView;
 
-import javax.swing.*;
 import java.io.FileNotFoundException;
 import java.util.*;
 
@@ -204,40 +203,49 @@ public class PostController {
         List<Label> labels = lR.getAll();
         PostView.showPostsList(posts);
         int demonId = PostService.getMaxId(posts);
+        int maxId = LabelService.getMaxId(labels);
         try{
             do {
                 PostView.editId();
                 int id = sc.nextInt();
                 Post post = pR.getById(id);
-                if (id > 0 && demonId >= id && !post.getPostStatus().equals(PostStatus.DELETED)){
-                    PostView.showPost(post);
-                    System.out.println(ForConsole.BORDER.getMessage());
-                    System.out.println("This post contain labels:");
-                    if (!post.getPostLabelList().isEmpty()) {
-                        LabelView.showLabelsList(post.getPostLabelList());
+                if (id > 0 && demonId >= id && !post.getPostStatus().equals(PostStatus.DELETED)) {
+                    do {
+                        PostView.showPost(post);
+                        System.out.println(ForConsole.BORDER.getMessage());
+                        System.out.println("This post contain labels:");
+                        if (!post.getPostLabelList().isEmpty()) {
+                            LabelView.showLabelsList(post.getPostLabelList());
+                        } else {
+                            PostView.listEmpty();
+                        }
+                        System.out.println(ForConsole.BORDER.getMessage());
+                        System.out.println("You can add this labels:");
+                        List<Label> tmpList = new ArrayList<>();
+                        labels.forEach((a) -> {
+                            if (!PostService.containLabel(post.getPostLabelList(), a)) {
+                                tmpList.add(a);
+                            }
+                        });
+                        LabelView.showLabelsList(tmpList);
+                        PostView.showCancel();
+                        LabelView.editId();
+                        int labelId = sc.nextInt();
+                        Label newLabel = lR.getById(labelId);
+                        if (labelId > 0 && labelId <= maxId && PostService.containLabel(tmpList, newLabel)) {
+                            post.getPostLabelList().add(newLabel);
+                        } else if (labelId == 0) {
+                            pR.save(post);
+                            isExit = true;
+                        } else {
+                            System.out.println("Id not exist !!!!");
+                        }
                     }
-                    else{
-                        PostView.listEmpty();
-                    }
-                    System.out.println(ForConsole.BORDER.getMessage());
-                    System.out.println("You can add this labels:");
-                    List<Label> tmpList = new ArrayList<>();
-                    labels.forEach((a) ->{
-                        if (!PostService.containLabel(post.getPostLabelList(), a))
-                        {
-                            tmpList.add(a);
-                        } });
-                    LabelView.showLabelsList(tmpList);
-
-                }
-                else if (id == 0){
-                    isExit = true;
-                }
-                else {
+                    while (!isExit);
+                } else {
                     System.out.println("Id not exist !!!!");
                 }
-            }
-            while (!isExit);
+            }while (!isExit);
         }
         catch (InputMismatchException nfe) {
             System.out.println("It's not a number !!!");

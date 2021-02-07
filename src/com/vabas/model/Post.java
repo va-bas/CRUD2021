@@ -34,6 +34,15 @@ public class Post implements Serializable {
         this.postStatus = PostStatus.UNDER_REVIEW;
     }
 
+    public Post(int id, String content,PostStatus postStatus) {
+        this.id = id;
+        this.content = content;
+        this.created = null;
+        this.updated = null;
+        this.postLabelList = null;
+        this.postStatus = postStatus;
+    }
+
     @Override
     public String toString() {
         return "Post{" +

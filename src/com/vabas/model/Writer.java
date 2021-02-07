@@ -1,8 +1,9 @@
 package com.vabas.model;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 
-public class Writer {
+public class Writer implements Serializable {
 
     private int id;
     private String firstName;

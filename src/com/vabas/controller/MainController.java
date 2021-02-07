@@ -19,7 +19,7 @@ public class MainController {
                     LabelController.startM();
                     break;
                 case "2":
-                    //WriterController.startM();
+                    WriterController.startM();
                     isExit = true;
                     break;
                 case "3":

@@ -18,7 +18,6 @@ import java.util.concurrent.atomic.AtomicBoolean;
 
 public class PostRepositoryImpl implements PostRepository {
     File fileName = new File("./src/com/vabas/resource/Posts.txt");
-    LabelRepositoryImpl lR = new LabelRepositoryImpl();
 
     @Override
     public Post getById(Integer id) throws FileNotFoundException {
@@ -46,6 +45,7 @@ public class PostRepositoryImpl implements PostRepository {
                     a.setId(post.getId());
                     a.setContent(post.getContent());
                     a.setUpdated(new Date().toString());
+                    a.setPostLabelList(post.getPostLabelList());
                     a.setPostStatus(PostStatus.ACTIVE);
                     flag.set(true);
                 }

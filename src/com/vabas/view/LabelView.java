@@ -2,6 +2,7 @@ package com.vabas.view;
 
 import com.vabas.model.Label;
 
+import java.util.Comparator;
 import java.util.List;
 
 public class LabelView {
@@ -41,15 +42,10 @@ public class LabelView {
 
     public static void showLabelsList(List<Label> labels){
         System.out.println(ForConsole.BORDER.getMessage());
-        labels.stream().filter((a) -> !a.getName().equals(LabelView.dell)).forEach(
+        labels.stream().filter((a) -> !a.getName().equals(LabelView.dell)).sorted(
+                Comparator.comparing(Label::getId)).forEach(
                 (a) -> System.out.println("Id: " + a.getId() + " | Name: " + a.getName())
         );
     }
-
-    public static void showLabel(Label a){
-        System.out.println(ForConsole.BORDER.getMessage());
-         System.out.println("Id: " + a.getId() + " | Name: " + a.getName());
-    }
-
 
 }
