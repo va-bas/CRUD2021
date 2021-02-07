@@ -24,7 +24,7 @@ public class MainController {
                     break;
                 case "3":
                     isExit = true;
-                    //PostController.startM();
+                    PostController.startM();
                     break;
                 case "4":
                     isExit = true;

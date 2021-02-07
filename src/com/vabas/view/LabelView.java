@@ -46,5 +46,10 @@ public class LabelView {
         );
     }
 
+    public static void showLabel(Label a){
+        System.out.println(ForConsole.BORDER.getMessage());
+         System.out.println("Id: " + a.getId() + " | Name: " + a.getName());
+    }
+
 
 }
