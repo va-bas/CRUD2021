@@ -29,4 +29,9 @@ public class WriterService {
         });
         return flag.get();
     }
+
+    public static void addPost(List<Post> posts, Post post){
+        Post newPost = new Post(post.getId(), post.getContent(), post.getPostStatus());
+        posts.add(newPost);
+    }
 }

@@ -210,6 +210,7 @@ public class WriterController {
                 && WriterService.containWriter(writers, writer)){
                     if (!writer.getPostsList().isEmpty()) {
                         WriterView.showWriter(writer);
+                        //Проверка что посты у писателя содержатся в общем списке постов (не удалены)
                         List<Post> tmpPostList = PostService.notDelPosts(posts, writer.getPostsList());
                         tmpPostList.forEach((a) -> {
                             PostView.showPost(a);
@@ -241,29 +242,43 @@ public class WriterController {
         boolean isExit = false;
         List<Writer> writers = wR.getAll();
         List<Post> posts = pR.getAll();
-        List<Label> labels = lR.getAll();
+        //List<Label> labels = lR.getAll();
         WriterView.showWritersList(writers);
         int demonId = WriterService.getMaxId(writers);
+        int maxId = PostService.getMaxId(posts);
         try{
             do {
                 WriterView.editId();
                 int id = sc.nextInt();
                 Writer writer = wR.getById(id);
                 if (id > 0 && demonId >= id && !writer.getLastName().equals(WriterView.dell)
-                        && WriterService.containWriter(writers, writer)){
-                    if (!writer.getPostsList().isEmpty()) {
-                        WriterView.showWriter(writer);
-                        List<Post> tmpPostList = PostService.notDelPosts(posts, writer.getPostsList());
-                        tmpPostList.forEach((a) -> {
-                            PostView.showPost(a);
-                            LabelView.showLabelsList(LabelService.notDelLabel(labels, a.getPostLabelList()));
-                        });
-                        isExit = true;
-                    }
-                    else{
-                        WriterView.showWriter(writer);
-                        WriterView.listEmpty();
-                    }
+                        && WriterService.containWriter(writers, writer)) {
+                    do {
+                        if (!writer.getPostsList().isEmpty()) {
+                            WriterView.showWriter(writer);
+                            PostView.showPostsList(PostService.notDelPosts(posts, writer.getPostsList()));
+                            //System.out.println("You can add this posts:");
+                            PostView.showPostsList(PostService.delPosts(posts, writer.getPostsList()));
+                        } else {
+                            WriterView.showWriter(writer);
+                            WriterView.listEmpty();
+                            System.out.println("You can add this posts:");
+                            PostView.showPostsList(posts);
+                        }
+
+                        PostView.showCancel();
+                        LabelView.editId();
+                        int postId = sc.nextInt();
+                        Post newPost = pR.getById(postId);
+                        if (postId > 0 && postId <= maxId && !PostService.containPost(writer.getPostsList(), newPost)) {
+                            WriterService.addPost(writer.getPostsList(), newPost);
+                        } else if (postId == 0) {
+                            wR.save(writer);
+                            isExit = true;
+                        } else {
+                            System.out.println("Id not exist !!!!");
+                        }
+                    }while (!isExit);
                 }
                 else {
                     System.out.println("Id not exist !!!!");
