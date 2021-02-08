@@ -71,19 +71,24 @@ public class PostController {
                     case 1:
                         try {
                             List<Label> labels = lR.getAll();
-                            LabelView.showLabelsList(labels);
+                            //Список лейблов которые можно добавить к этому посту
+                            //(без тех которые уже есть и удаленных)
+                            LabelView.showLabelsList(LabelService.delLabel(labels, newPost.getPostLabelList()));
                             LabelView.editId();
                             int labelId = sc.nextInt();
                             int maxId = LabelService.getMaxId(labels);
                             if (labelId > 0 && labelId <= maxId) {
                                 Label label = lR.getById(labelId);
                                 if (!label.getName().equals(LabelView.dell) &&
-                                        !PostService.containLabel(newPost.getPostLabelList(),label)) {
+                                        !LabelService.containLabel(newPost.getPostLabelList(), label)) {
                                     newPost.getPostLabelList().add(label);
                                 }
                                 else {
                                     System.out.println("Id not exist !!!!");
                                 }
+                            }
+                            else {
+                                System.out.println("Id not exist !!!!");
                             }
                         } catch (NullPointerException e) {
                             System.out.println("Id not exist !!!!");
@@ -163,6 +168,7 @@ public class PostController {
     public static void show() throws FileNotFoundException {
         Scanner sc = new Scanner(System.in);
         PostRepositoryImpl pR = new PostRepositoryImpl();
+        LabelRepositoryImpl lR = new LabelRepositoryImpl();
         boolean isExit = false;
         List<Post> posts = pR.getAll();
         PostView.showPostsList(posts);
@@ -175,7 +181,7 @@ public class PostController {
                 if (id > 0 && demonId >= id && !post.getPostStatus().equals(PostStatus.DELETED)){
                     if (!post.getPostLabelList().isEmpty()) {
                         PostView.showPost(post);
-                        LabelView.showLabelsList(post.getPostLabelList());
+                        LabelView.showLabelsList(LabelService.notDelLabel(lR.getAll(), post.getPostLabelList()));
                         isExit = true;
                     }
                     else{
@@ -215,7 +221,7 @@ public class PostController {
                         System.out.println(ForConsole.BORDER.getMessage());
                         System.out.println("This post contain labels:");
                         if (!post.getPostLabelList().isEmpty()) {
-                            LabelView.showLabelsList(post.getPostLabelList());
+                            LabelView.showLabelsList(LabelService.notDelLabel(labels, post.getPostLabelList()));
                         } else {
                             PostView.listEmpty();
                         }
@@ -223,7 +229,7 @@ public class PostController {
                         System.out.println("You can add this labels:");
                         List<Label> tmpList = new ArrayList<>();
                         labels.forEach((a) -> {
-                            if (!PostService.containLabel(post.getPostLabelList(), a)) {
+                            if (!LabelService.containLabel(post.getPostLabelList(), a)) {
                                 tmpList.add(a);
                             }
                         });
@@ -232,7 +238,7 @@ public class PostController {
                         LabelView.editId();
                         int labelId = sc.nextInt();
                         Label newLabel = lR.getById(labelId);
-                        if (labelId > 0 && labelId <= maxId && PostService.containLabel(tmpList, newLabel)) {
+                        if (labelId > 0 && labelId <= maxId && LabelService.containLabel(tmpList, newLabel)) {
                             post.getPostLabelList().add(newLabel);
                         } else if (labelId == 0) {
                             pR.save(post);

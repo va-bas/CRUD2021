@@ -42,6 +42,8 @@ public class LabelView {
 
     public static void showLabelsList(List<Label> labels){
         System.out.println(ForConsole.BORDER.getMessage());
+        System.out.println("Labels list:");
+        System.out.println(ForConsole.BORDER.getMessage());
         labels.stream().filter((a) -> !a.getName().equals(LabelView.dell)).sorted(
                 Comparator.comparing(Label::getId)).forEach(
                 (a) -> System.out.println("Id: " + a.getId() + " | Name: " + a.getName())

@@ -1,16 +1,21 @@
 package com.vabas.controller;
 
+import com.vabas.model.Label;
 import com.vabas.model.Post;
 import com.vabas.model.PostStatus;
 import com.vabas.model.Writer;
+import com.vabas.repository.impl.LabelRepositoryImpl;
 import com.vabas.repository.impl.PostRepositoryImpl;
 import com.vabas.repository.impl.WriterRepositoryImpl;
+import com.vabas.service.LabelService;
 import com.vabas.service.PostService;
 import com.vabas.service.WriterService;
 import com.vabas.view.ForConsole;
+import com.vabas.view.LabelView;
 import com.vabas.view.PostView;
 import com.vabas.view.WriterView;
 
+import java.io.FileNotFoundException;
 import java.util.ArrayList;
 import java.util.InputMismatchException;
 import java.util.List;
@@ -28,16 +33,16 @@ public class WriterController {
                     create();
                     break;
                 case "2":
-                    //edit();
+                    edit();
                     break;
                 case "3":
-                    //delete();
+                    delete();
                     break;
                 case "4":
-                    //show();
+                    show();
                     break;
                 case "5":
-                    //addListElementsForWriter();
+                    addListElementsForWriter();
                     break;
                 case "6":
                     isExit = true;
@@ -75,7 +80,7 @@ public class WriterController {
                     case 1:
                         try {
                             List<Post> posts = pR.getAll();
-                            PostView.showPostsList(posts);
+                            PostView.showPostsList(PostService.delPosts(posts, newWriter.getPostsList()));
                             PostView.editId();
                             int pId = sc.nextInt();
                             int maxId = PostService.getMaxId(posts);
@@ -89,6 +94,9 @@ public class WriterController {
                                     System.out.println("Id not exist !!!!");
                                 }
                             }
+                            else {
+                                System.out.println("Id not exist !!!!");
+                            }
                         } catch (NullPointerException e) {
                             System.out.println("Id not exist !!!!");
                         }
@@ -101,8 +109,170 @@ public class WriterController {
         } catch (InputMismatchException nfe) {
             System.out.println("It's not a number !!!");
         }
-        wR.save(newWriter);
-        System.out.println(wR.getAll().toString());
+        //Если последний ID был удален то он остается в списке с пометкой dell
+        //в этом случае когда добавляем новый экземпляр списка нам надо удалить
+        //экземпляр с пометкой dell, здесь это и делается + часный случай когда
+        //в списке пусто до добавления (maxID = 0 )
+        if (demonId != 0){
+            if (wR.getById(demonId).getLastName().equals(WriterView.dell)){
+                wR.save(newWriter);
+                wR.getById(demonId);
+            }
+            else {
+                wR.save(newWriter);
+            }
+        }
+        else {
+            wR.save(newWriter);
+        }
     }
 
+    public static void edit() throws Exception {
+        Scanner sc = new Scanner(System.in);
+        WriterRepositoryImpl wR = new WriterRepositoryImpl();
+        boolean isExit = false;
+        List<Writer> writers = wR.getAll();
+        WriterView.showWritersList(writers);
+        int demonId = WriterService.getMaxId(writers);
+        try {
+            do {
+                WriterView.editId();
+                int id = sc.nextInt();
+                Writer writer = wR.getById(id);
+                if (id > 0 && demonId >= id && !writer.getLastName().equals(WriterView.dell)){
+                    WriterView.showFirsName();
+                    String fName = sc.next();
+                    writer.setFirstName(fName);
+                    WriterView.showLastName();
+                    String lName = sc.next();
+                    writer.setLastName(lName);
+                    wR.save(writer);
+                    isExit = true;
+                }
+                else {
+                    System.out.println("Id not exist !!!!");
+                }
+            }
+            while (!isExit);
+        }
+        catch (InputMismatchException nfe) {
+            System.out.println("It's not a number !!!");
+        }
+    }
+
+    public static void delete() throws Exception {
+        Scanner sc = new Scanner(System.in);
+        WriterRepositoryImpl wR = new WriterRepositoryImpl();
+        boolean isExit = false;
+        List<Writer> writers = wR.getAll();
+        WriterView.showWritersList(writers);
+        try {
+            do {
+                WriterView.editId();
+                try{
+                    int id = sc.nextInt();
+                    int maxId = WriterService.getMaxId(writers);
+                    Writer writer = wR.getById(id);
+                    if (id > 0 && id <= maxId && !writer.getLastName().equals(LabelView.dell)) {
+                        wR.deleteById(id);
+                        isExit = true;
+                    }
+                    else {
+                        System.out.println("Id not exist !!!!");
+                    }
+                } catch (NullPointerException e) {
+                    System.out.println("Id not exist !!!!");
+                }
+            }while (!isExit);
+        }
+        catch (InputMismatchException nfe){
+            System.out.println("It's not a number !!!");
+        }
+    }
+
+    public static void show() throws FileNotFoundException {
+        Scanner sc = new Scanner(System.in);
+        WriterRepositoryImpl wR = new WriterRepositoryImpl();
+        PostRepositoryImpl pR = new PostRepositoryImpl();
+        LabelRepositoryImpl lR = new LabelRepositoryImpl();
+        boolean isExit = false;
+        List<Writer> writers = wR.getAll();
+        List<Post> posts = pR.getAll();
+        List<Label> labels = lR.getAll();
+        WriterView.showWritersList(writers);
+        int demonId = WriterService.getMaxId(writers);
+        try{
+            do {
+                WriterView.editId();
+                int id = sc.nextInt();
+                Writer writer = wR.getById(id);
+                if (id > 0 && demonId >= id && !writer.getLastName().equals(WriterView.dell)
+                && WriterService.containWriter(writers, writer)){
+                    if (!writer.getPostsList().isEmpty()) {
+                        WriterView.showWriter(writer);
+                        List<Post> tmpPostList = PostService.notDelPosts(posts, writer.getPostsList());
+                        tmpPostList.forEach((a) -> {
+                            PostView.showPost(a);
+                            LabelView.showLabelsList(LabelService.notDelLabel(labels, a.getPostLabelList()));
+                        });
+                        isExit = true;
+                    }
+                    else{
+                        WriterView.showWriter(writer);
+                        WriterView.listEmpty();
+                    }
+                }
+                else {
+                    System.out.println("Id not exist !!!!");
+                }
+            }
+            while (!isExit);
+        }
+        catch (InputMismatchException nfe) {
+            System.out.println("It's not a number !!!");
+        }
+    }
+
+    public static void addListElementsForWriter() throws FileNotFoundException {
+        Scanner sc = new Scanner(System.in);
+        WriterRepositoryImpl wR = new WriterRepositoryImpl();
+        PostRepositoryImpl pR = new PostRepositoryImpl();
+        LabelRepositoryImpl lR = new LabelRepositoryImpl();
+        boolean isExit = false;
+        List<Writer> writers = wR.getAll();
+        List<Post> posts = pR.getAll();
+        List<Label> labels = lR.getAll();
+        WriterView.showWritersList(writers);
+        int demonId = WriterService.getMaxId(writers);
+        try{
+            do {
+                WriterView.editId();
+                int id = sc.nextInt();
+                Writer writer = wR.getById(id);
+                if (id > 0 && demonId >= id && !writer.getLastName().equals(WriterView.dell)
+                        && WriterService.containWriter(writers, writer)){
+                    if (!writer.getPostsList().isEmpty()) {
+                        WriterView.showWriter(writer);
+                        List<Post> tmpPostList = PostService.notDelPosts(posts, writer.getPostsList());
+                        tmpPostList.forEach((a) -> {
+                            PostView.showPost(a);
+                            LabelView.showLabelsList(LabelService.notDelLabel(labels, a.getPostLabelList()));
+                        });
+                        isExit = true;
+                    }
+                    else{
+                        WriterView.showWriter(writer);
+                        WriterView.listEmpty();
+                    }
+                }
+                else {
+                    System.out.println("Id not exist !!!!");
+                }
+            }
+            while (!isExit);
+        }
+        catch (InputMismatchException nfe) {
+            System.out.println("It's not a number !!!");
+        }
+    }
 }

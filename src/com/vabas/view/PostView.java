@@ -62,6 +62,8 @@ public class PostView {
 
     public static void showPostsList(List<Post> posts){
         System.out.println(ForConsole.BORDER.getMessage());
+        System.out.println("Posts list:");
+        System.out.println(ForConsole.BORDER.getMessage());
         posts.stream().filter((a) -> !a.getPostStatus().equals(PostStatus.DELETED)).forEach(
                 (a) -> System.out.println("Id: " + a.getId() + " | Content: " + a.getContent() +
                         " | Created: " + a.getCreated() + " | Updated: " + a.getUpdated())
@@ -69,6 +71,8 @@ public class PostView {
     }
 
     public static void showPost(Post a){
+        System.out.println(ForConsole.BORDER.getMessage());
+        System.out.println("Post:");
         System.out.println(ForConsole.BORDER.getMessage());
         System.out.println("Id: " + a.getId() + " | Content: " + a.getContent() +
                 " | Created: " + a.getCreated() + " | Updated: " + a.getUpdated());

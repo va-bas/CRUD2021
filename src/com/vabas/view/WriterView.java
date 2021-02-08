@@ -6,6 +6,7 @@ import com.vabas.model.PostStatus;
 import com.vabas.model.Writer;
 
 import java.util.ArrayList;
+import java.util.List;
 
 public class WriterView {
     public static final String dell = "This writer was deleted";
@@ -45,31 +46,36 @@ public class WriterView {
         System.out.println(ForConsole.BORDER.getMessage());
     }
 
-
-
     public static void editId(){
         System.out.println(ForConsole.BORDER.getMessage());
         System.out.println("Enter writer id: ");
         System.out.println(ForConsole.BORDER.getMessage());
     }
 
-
-
-
-
-    public static String ifLabelsListIsEmpty(ArrayList<Label> arr){
-        String str = "";
-        if (!arr.isEmpty()){
-            for (Label label : arr) {
-                if (!label.getName().equals(LabelView.dell))
-                str += "Id: " + label.getId() + " Name: "
-                        + label.getName() + "\n";
-            }
-            return str;
-        }
-        else{
-            return "Labels is empty\n";
-        }
+    public static void showWritersList(List<Writer> writers){
+        System.out.println(ForConsole.BORDER.getMessage());
+        writers.stream().filter((a) -> !a.getLastName().equals(WriterView.dell)).forEach(
+                (a) -> System.out.println("Id: " + a.getId() + " | Firsname: " + a.getFirstName() +
+                        " | Lastname: " + a.getLastName() )
+        );
     }
+
+    public static void showWriter(Writer a){
+        System.out.println(ForConsole.BORDER.getMessage());
+        System.out.println("Writer:");
+        System.out.println(ForConsole.BORDER.getMessage());
+        System.out.println("Id: " + a.getId() + " | Firsname: " + a.getFirstName() +
+                        " | Lastname: " + a.getLastName());
+    }
+
+    public static void listEmpty(){
+        System.out.println(ForConsole.BORDER.getMessage());
+        System.out.println("Posts list for this writer is empty");
+    }
+
+
+
+
+
 
 }
