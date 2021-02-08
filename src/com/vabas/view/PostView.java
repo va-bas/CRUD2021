@@ -1,6 +1,5 @@
 package com.vabas.view;
 
-import com.vabas.model.Label;
 import com.vabas.model.Post;
 import com.vabas.model.PostStatus;
 

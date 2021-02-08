@@ -1,11 +1,7 @@
 package com.vabas.view;
 
-import com.vabas.model.Label;
-import com.vabas.model.Post;
-import com.vabas.model.PostStatus;
 import com.vabas.model.Writer;
 
-import java.util.ArrayList;
 import java.util.List;
 
 public class WriterView {
@@ -55,7 +51,7 @@ public class WriterView {
     public static void showWritersList(List<Writer> writers){
         System.out.println(ForConsole.BORDER.getMessage());
         writers.stream().filter((a) -> !a.getLastName().equals(WriterView.dell)).forEach(
-                (a) -> System.out.println("Id: " + a.getId() + " | Firsname: " + a.getFirstName() +
+                (a) -> System.out.println("Id: " + a.getId() + " | Firstname: " + a.getFirstName() +
                         " | Lastname: " + a.getLastName() )
         );
     }
@@ -64,7 +60,7 @@ public class WriterView {
         System.out.println(ForConsole.BORDER.getMessage());
         System.out.println("Writer:");
         System.out.println(ForConsole.BORDER.getMessage());
-        System.out.println("Id: " + a.getId() + " | Firsname: " + a.getFirstName() +
+        System.out.println("Id: " + a.getId() + " | Firstname: " + a.getFirstName() +
                         " | Lastname: " + a.getLastName());
     }
 

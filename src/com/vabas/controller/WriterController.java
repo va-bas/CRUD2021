@@ -267,7 +267,7 @@ public class WriterController {
                         }
 
                         PostView.showCancel();
-                        LabelView.editId();
+                        PostView.editId();
                         int postId = sc.nextInt();
                         Post newPost = pR.getById(postId);
                         if (postId > 0 && postId <= maxId && !PostService.containPost(writer.getPostsList(), newPost)) {
