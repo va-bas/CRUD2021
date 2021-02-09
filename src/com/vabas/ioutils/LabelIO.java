@@ -1,4 +1,4 @@
-package com.vabas.service;
+package com.vabas.ioutils;
 
 import com.vabas.model.Label;
 import com.vabas.view.LabelView;
@@ -8,7 +8,7 @@ import java.util.Comparator;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicBoolean;
 
-public class LabelService {
+public class LabelIO {
     public static int getMaxId(List<Label> t){
         int maxId;
         if(t.isEmpty()){

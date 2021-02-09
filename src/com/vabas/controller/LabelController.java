@@ -2,12 +2,11 @@ package com.vabas.controller;
 
 import com.vabas.model.Label;
 import com.vabas.repository.impl.LabelRepositoryImpl;
-import com.vabas.service.LabelService;
+import com.vabas.ioutils.LabelIO;
 import com.vabas.view.ForConsole;
 import com.vabas.view.LabelView;
 
 import java.io.FileNotFoundException;
-import java.io.IOException;
 import java.util.InputMismatchException;
 import java.util.List;
 import java.util.Scanner;
@@ -58,7 +57,7 @@ public class LabelController {
         LabelRepositoryImpl lR = new LabelRepositoryImpl();
         LabelView.create();
         String name = sc.next();
-        int demonId = LabelService.getMaxId(lR.getAll());
+        int demonId = LabelIO.getMaxId(lR.getAll());
         if (demonId != 0) {
             if (lR.getById(demonId).getName().equals(LabelView.dell)) {
                 lR.save(new Label(demonId + 1, name));
@@ -84,7 +83,7 @@ public class LabelController {
                 LabelView.editId();
                 try {
                     int id = sc.nextInt();
-                    int maxId = LabelService.getMaxId(labels);
+                    int maxId = LabelIO.getMaxId(labels);
                     if (id > 0 && id <= maxId) {
                         Label label = lR.getById(id);
                         if (!label.getName().equals(LabelView.dell)) {
@@ -118,7 +117,7 @@ public class LabelController {
                 LabelView.editId();
                 try{
                     int id = sc.nextInt();
-                    int maxId = LabelService.getMaxId(labels);
+                    int maxId = LabelIO.getMaxId(labels);
                     Label label = lR.getById(id);
                     if (id > 0 && id <= maxId && !label.getName().equals(LabelView.dell)) {
                         lR.deleteById(id);

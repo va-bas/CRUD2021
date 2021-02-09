@@ -1,4 +1,4 @@
-package com.vabas.service;
+package com.vabas.ioutils;
 
 import com.vabas.model.Post;
 import com.vabas.model.Writer;
@@ -7,7 +7,7 @@ import java.util.Comparator;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicBoolean;
 
-public class WriterService {
+public class WriterIO {
     public static int getMaxId(List<Writer> t){
         int maxId;
         if(t.isEmpty()){

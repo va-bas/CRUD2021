@@ -3,13 +3,14 @@ package com.vabas.repository.impl;
 import com.vabas.ioutils.IoUtils;
 import com.vabas.model.Label;
 import com.vabas.repository.LabelRepository;
-import com.vabas.service.LabelService;
+import com.vabas.ioutils.LabelIO;
 import com.vabas.view.LabelView;
 
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 public class LabelRepositoryImpl implements LabelRepository {
@@ -17,37 +18,25 @@ public class LabelRepositoryImpl implements LabelRepository {
 
     @Override
     public Label getById(Integer id) throws FileNotFoundException {
-        List<Label> labels = getAll();
-        /*AtomicReference<Label> tmp = new AtomicReference<>(new Label());
-        try{
-            labels.forEach((a) -> {
-                if (a.getId() == id) {
-                    tmp.set(a);
-                }
-            });
-        }
-        catch (Exception er){
-            System.out.println("Id not exist");
-        }
-        return tmp.get();*/
+        List<Label> labels = getAllInternal();
         return labels.stream().filter(a -> a.getId() == id).findFirst().orElse(new Label());
     }
 
     @Override
     public List<Label> getAll() throws FileNotFoundException {
-        if (IoUtils.ReadFromFile(fileName) == null){
+        if (Objects.isNull(IoUtils.readFromFile(fileName))){
             return new ArrayList<>();
         }
         else{
-            return IoUtils.ReadFromFile(fileName);
+            return IoUtils.readFromFile(fileName);
         }
     }
 
     @Override
     public void save(Label label) throws FileNotFoundException {
-        List<Label> labels = getAll();
+        List<Label> labels = getAllInternal();
         AtomicBoolean flag = new AtomicBoolean(false);
-        try{
+        try {
             labels.forEach((a) -> {
                 if (a.getId() == label.getId()) {
                     a.setId(label.getId());
@@ -55,21 +44,21 @@ public class LabelRepositoryImpl implements LabelRepository {
                     flag.set(true);
                 }
             });
-            if (!flag.get()){
+            if (!flag.get()) {
                 labels.add(label);
             }
-            IoUtils.WriteToFile(labels, fileName);
-        }
-        catch (Exception er){
+            IoUtils.writeToFile(labels, fileName);
+        } catch (Exception er) {
             System.out.println("Id not exist");
         }
-
     }
+
+
 
     @Override
     public void deleteById(Integer id) throws Exception {
-        List<Label> labels = getAll();
-        if (LabelService.getMaxId(labels) == id) {
+        List<Label> labels = getAllInternal();
+        if (LabelIO.getMaxId(labels) == id) {
             labels.forEach((a) ->
             {
                 if (a.getId() == id) {
@@ -79,6 +68,27 @@ public class LabelRepositoryImpl implements LabelRepository {
         } else {
             labels.removeIf((a) -> a.getId() == id);
         }
-        IoUtils.WriteToFile(labels, fileName);
+        IoUtils.writeToFile(labels, fileName);
     }
+
+    private List<Label> getAllInternal() throws FileNotFoundException {
+        if (Objects.isNull(IoUtils.readFromFile(fileName))){
+            return new ArrayList<>();
+        }
+        else{
+            return IoUtils.readFromFile(fileName);
+        }
+    }
+
+
+
+    //------------------------------------------------/*@Override
+    //    public Label save(Label label) throws FileNotFoundException {
+        //        return null;
+        //    }
+        //
+        //    @Override
+        //    public Label update(Label label) throws FileNotFoundException {
+        //        return null;
+        //    }*/
 }

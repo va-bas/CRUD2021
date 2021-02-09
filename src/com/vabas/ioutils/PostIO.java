@@ -1,4 +1,4 @@
-package com.vabas.service;
+package com.vabas.ioutils;
 
 import com.vabas.model.Label;
 import com.vabas.model.Post;
@@ -10,7 +10,7 @@ import java.util.Comparator;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicBoolean;
 
-public class PostService {
+public class PostIO {
     public static int getMaxId(List<Post> t){
         int maxId;
         if(t.isEmpty()){
@@ -36,7 +36,7 @@ public class PostService {
     public static List<Post> delPosts(List<Post> l1, List<Post> l2){
         List<Post> res = new ArrayList<>();
         l1.stream().filter((a) -> !containPost(l2, a)).filter((a) -> !a.getPostStatus().equals(PostStatus.DELETED))
-                .forEach((a) -> res.add(a));
+                .forEach(res::add);
         return res;
     }
 
