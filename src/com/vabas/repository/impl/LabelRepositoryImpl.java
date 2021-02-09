@@ -33,27 +33,31 @@ public class LabelRepositoryImpl implements LabelRepository {
     }
 
     @Override
-    public void save(Label label) throws FileNotFoundException {
+    public void update(Label label) throws FileNotFoundException {
         List<Label> labels = getAllInternal();
-        AtomicBoolean flag = new AtomicBoolean(false);
         try {
             labels.forEach((a) -> {
                 if (a.getId() == label.getId()) {
                     a.setId(label.getId());
                     a.setName(label.getName());
-                    flag.set(true);
                 }
             });
-            if (!flag.get()) {
-                labels.add(label);
-            }
             IoUtils.writeToFile(labels, fileName);
         } catch (Exception er) {
             System.out.println("Id not exist");
         }
     }
 
-
+    @Override
+    public void save(Label label) throws FileNotFoundException {
+        List<Label> labels = getAllInternal();
+        try {
+            labels.add(label);
+            IoUtils.writeToFile(labels, fileName);
+        } catch (Exception er) {
+            System.out.println("Id not exist");
+        }
+    }
 
     @Override
     public void deleteById(Integer id) throws Exception {

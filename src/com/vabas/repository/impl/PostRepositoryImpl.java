@@ -1,6 +1,7 @@
 package com.vabas.repository.impl;
 
 import com.vabas.ioutils.IoUtils;
+import com.vabas.model.Label;
 import com.vabas.model.Post;
 import com.vabas.model.PostStatus;
 import com.vabas.repository.PostRepository;
@@ -33,9 +34,8 @@ public class PostRepositoryImpl implements PostRepository {
     }
 
     @Override
-    public void save(Post post) throws FileNotFoundException {
+    public void update(Post post) throws FileNotFoundException {
         List<Post> posts = getAllInternal();
-        AtomicBoolean flag = new AtomicBoolean(false);
         try{
             posts.forEach((a) -> {
                 if (a.getId() == post.getId()) {
@@ -44,18 +44,25 @@ public class PostRepositoryImpl implements PostRepository {
                     a.setUpdated(new Date().toString());
                     a.setPostLabelList(post.getPostLabelList());
                     a.setPostStatus(PostStatus.ACTIVE);
-                    flag.set(true);
                 }
             });
-            if (!flag.get()){
-                posts.add(post);
-            }
             IoUtils.writeToFile(posts, fileName);
         }
         catch (Exception er){
             System.out.println("Id not exist");
         }
+    }
 
+    @Override
+    public void save(Post post) throws FileNotFoundException {
+        List<Post> posts = getAllInternal();
+        try {
+        posts.add(post);
+        IoUtils.writeToFile(posts, fileName);
+        }
+        catch (Exception er){
+            System.out.println("Id not exist");
+        }
     }
 
     @Override
